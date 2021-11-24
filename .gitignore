@@ -202,7 +202,8 @@ cython_debug/
 # Others
 #############################
 
+bin/
 readers_writers
-philo/tmp
-philo/philosophes
-prodcons/producteurs_consommateurs
+tmp
+philosophes
+producteurs_consommateurs
