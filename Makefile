@@ -1,14 +1,32 @@
-CFLAGS=-std=c11 -pedantic -Wvla -Wall -Werror -pthread
+BIN				:=	bin
+SRC				:=	src
 
-all:
-	make readers_writers
+COMMON_SRC		:=	$(wildcard $(SRC)/common/*.c)
+COMMON_OBJ		:=	$(COMMON_SRC:.c=.o)
 
-readers_writers: readers_writers.c utils.o
-	gcc $(CFLAGS) -o readers_writers readers_writers.c utils.o
+LOCK			:=	$(BIN)/test
+LOCK_SRC		:=	$(wildcard $(SRC)/part2/*.c)
+LOCK_OBJ		:=	$(LOCK_SRC:.c=.o)
 
-utils.o: utils.c utils.h
-	gcc $(CFLAGS) -c utils.c
+CC				:=	gcc
+CFLAGS			:=	-pedantic -Wvla -Wall -Werror
+LDFLAGS			:=	-pthread
+
+PHONY			:=	all clean $(LOCK)
+
+all: $(LOCK)
+
+$(LOCK): $(LOCK_OBJ) $(COMMON_OBJ) | $(BIN)
+	$(CC) -o $@ $(LOCK_OBJ) $(COMMON_OBJ)
+
+$(BIN):
+	mkdir $@
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $^
 
 clean:
-	rm -rf *.o
-	rm -f readers_writers
+	@$(RM) -rv $(BIN)
+	@find . -type f -name '*.o' -exec rm -v {} \;
+
+.PHONY = $(PHONY)
