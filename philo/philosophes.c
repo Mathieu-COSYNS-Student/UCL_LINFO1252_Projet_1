@@ -1,146 +1,139 @@
 #include <pthread.h>
+
 #include <stdio.h>
+
 #include <stdlib.h>
+
 #include <stdbool.h>
+
 #include <unistd.h>
+
+#include <errno.h>
+
+#include <string.h>
 
 #define CYCLES 100000
 
-
 int numberOfPhilosophers;
-int numberOfForks;
-int leftFork;
-int rightFork;
+pthread_t * philosophers;
+pthread_mutex_t * forks;
 
-pthread_t *philosophers;
-pthread_mutex_t *forks;
-
-void eating (int philosopherID){
-	printf("Philosopher n°%d is eating\n",philosopherID);
+void eating(int philosopherID) {
+  printf("Philosopher n°%d is eating\n", philosopherID);
 
 }
 
-void* philosopher(void* arg){
+void * philosopher(void * arg) {
 
-	int *id = (int*)arg;
-	leftFork = *id;
-	rightFork = (leftFork + 1) % numberOfPhilosophers; 
+  int * id = (int * ) arg;
+  int leftFork = * id;
+  int rightFork = (leftFork + 1) % numberOfPhilosophers;
 
-	printf("this is my id : %d\n this is my leftFork :%d\n right fork : %d\n",*id, leftFork, rightFork);
+  for (int i = 0; i < CYCLES; i++) {
+    if (leftFork < rightFork) {
+      pthread_mutex_lock( & forks[leftFork]);
+      printf("Philosopher n°%d took his left fork [%d]\n", * id, leftFork);
+      pthread_mutex_lock( & forks[rightFork]);
+      printf("Philosopher n°%d took his right fork [%d]\n", * id, rightFork);
+    } else {
+      pthread_mutex_lock( & forks[rightFork]);
+      printf("Philosopher n°%d took his right fork [%d]\n", * id, rightFork);
+      pthread_mutex_lock( & forks[leftFork]);
+      printf("Philosopher n°%d took his left fork [%d]\n", * id, leftFork);
+    }
 
+    eating( * id);
 
-	for (int i = 0; i < CYCLES; i++){
-		if(leftFork<rightFork) {
-      		pthread_mutex_lock(&forks[leftFork]);
-	  		printf("Philosopher n°%d took his left fork [%d]\n",*id,leftFork);
-      		pthread_mutex_lock(&forks[rightFork]);
-      		printf("Philosopher n°%d took his right fork [%d]\n",*id,rightFork);
-    		} else {
-	  		pthread_mutex_lock(&forks[rightFork]);
-	  		printf("Philosopher n°%d took his right fork [%d]\n",*id,rightFork);
-      		pthread_mutex_lock(&forks[leftFork]);
-      		printf("Philosopher n°%d took his left fork [%d]\n",*id,leftFork);
-    		}
+    pthread_mutex_unlock( & forks[leftFork]);
+    printf("Philosopher n°%d has freed his left fork [%d]\n", * id, leftFork);
+    pthread_mutex_unlock( & forks[rightFork]);
+    printf("Philosopher n°%d has freed his right fork [%d]\n", * id, rightFork);
+  }
 
-    		eating(*id);
-
-    		pthread_mutex_unlock(&forks[leftFork]);
-		printf("Philosopher n°%d has freed his left fork [%d]\n",*id,leftFork);
-    		pthread_mutex_unlock(&forks[rightFork]);
-    		printf("Philosopher n°%d has freed his right fork [%d]\n",*id,rightFork);
-	}
-
-	return (NULL);
+  return (NULL);
 }
 
+int main(int argc, char const * argv[]) {
+  // HANDLING THE INPUT ARGUMENTS
+  if (argc != 2) {
+    printf("This program uses 1 argument.\n");
+    exit(-1);
+  }
 
+  numberOfPhilosophers = atoi(argv[1]);
 
-int main(int argc, char const *argv[])
-{
-	// HANDLING THE INPUT ARGUMENTS
-	if(argc != 2){
-		printf("This program uses 1 argument.\n");
-		exit(-1);
-	}
+  //CREATING THE PHILOSOPHERS(threads) AND FORKS(mutexes) ARRAYS
 
-	numberOfPhilosophers = atoi(argv[1]);
-	numberOfForks = numberOfPhilosophers;
+  philosophers = (pthread_t * ) malloc(numberOfPhilosophers * sizeof(pthread_t));
+  if (philosophers == NULL) {
+    printf("Philosophers memory was not allocated\n");
+    exit(0);
+  } else {
+    printf("Philosophers : %d \n", numberOfPhilosophers);
+  }
 
+  forks = (pthread_mutex_t * ) malloc(numberOfPhilosophers * sizeof(pthread_mutex_t));
+  if (forks == NULL) {
+    printf("Forks memory was not allocated\n");
+    exit(0);
+  } else {
+    printf("Forks : %d\n", numberOfPhilosophers);
+  }
 
-	 //CREATING THE PHILOSOPHERS AND FORKS ARRAYS
+  // INITIALIZING THE MUTEXES IN THE FORKS ARRAY
 
-	philosophers = (pthread_t*)malloc(numberOfPhilosophers*sizeof(pthread_t));
-	if(philosophers==NULL){
-		printf("Philosophers memory was not allocated\n");
-		exit(0);
-	}else{
-		printf("Philosophers : %d \n",numberOfPhilosophers);
-	}
+  int err;
 
-	forks = (pthread_mutex_t*)malloc(numberOfForks*sizeof(pthread_mutex_t));
+  for (int i = 0; i < numberOfPhilosophers; i++) {
+    err = pthread_mutex_init( & (forks[i]), NULL);
+    if (err != 0) {
+      printf("ERROR WHILE INITIALIZING THE MUTEX (FORK) N°%d", i);
+      exit(-1);
+    } else {
+      printf("FORK N°%d CREATED\n", i);
+    }
+  }
 
-	if(forks==NULL){
-		printf("Forks memory was not allocated\n");
-		exit(0);
-	}else{
-		printf("Forks : %d\n",numberOfForks);
-	}
+  //CREATING THE PHILOSOPHER THREADS
 
-	// INITIALIZING THE MUTEXES IN THE FORK ARRAY
+  for (int i = 0; i < numberOfPhilosophers; i++) {
+    int * j = (int * ) malloc(sizeof(int));
+    * j = i;
+    err = pthread_create( & (philosophers[i]), NULL, philosopher, (void * ) j);
+    if (err != 0) {
+      printf("ERROR WHILE CREATING THREAD N°%d", i);
+      exit(-1);
+    } else {
+      printf("THREAD N° %d CREATED\n", i);
+    }
+  }
 
-	int err;
+  //JOINING THE PHILOSOPHER THREADS
 
-	for (int i = 0; i < numberOfForks; i++)
-	{
-		err = pthread_mutex_init(&(forks[i]), NULL);
-		if(err!=0){
-			error(err,"MUTEX NOT INITIALIZED");
-		}else{
-			printf("FORK N°%d CREATED\n", i);
-		}
-	}
+  for (int i = 0; i < numberOfPhilosophers; i++) {
+    err = pthread_join(philosophers[i], NULL);
+    if (err != 0) {
+      printf("ERROR WHILE JOINING THREAD N°%d", i);
+      exit(-1);
+    } else {
+      printf("THREAD N° %d JOINED\n", i);
+    }
+  }
 
-	//CREATING THE PHILOSOPHER THREADS
+  //DESTROYING THE FORK MUTEXES
 
-	for (int i = 0; i < numberOfPhilosophers; i++)
-	{
-		int* j = (int*)malloc(sizeof(int));
-		*j = i;
-		err = pthread_create(&(philosophers[i]),NULL,&philosopher,(void *) j);
-		if(err!=0){
-			error(err,"pthread_create");
-		}else{
-			printf("THREAD N° %d CREATED\n", i);
-		}
-	}
+  for (int i = 0; i < numberOfPhilosophers; i++) {
+    err = pthread_mutex_destroy( & (forks[i]));
+    if (err != 0) {
+      printf("ERROR WHILE DESTROYING THE THREAD N°%d", i);
+      exit(-1);
+    }
+  }
 
-	//JOINING THE PHILOSOPHER THREADS
+  //FREEING THE ARRAYS OF FORKS AND PHILOSOPHERS
 
-	for (int i = 0; i < numberOfPhilosophers; i++)
-	{
-		err = pthread_join(philosophers[i],NULL);
-		 if(err!=0){
-		 	error(err,"pthread_join");
-		 }else{
-			printf("THREAD N° %d JOINED\n", i);
-		}
-	}
+  free(philosophers);
+  free(forks);
 
-
-	//DESTROYING THE FORK MUTEXES
-
-	for (int i = 0; i < numberOfForks; ++i)
-	{
-		err=pthread_mutex_destroy(&(forks[i]));
-  		if(err!=0){
-  	    	error(err,"pthread_mutex_destroy");
-  		}
-	}
-
-	//FREEING THE ARRAYS OF FORKS AND PHILOSOPHERS
-
-	free(philosophers);
-	free(forks);
-
-	return 0;
+  return 0;
 }

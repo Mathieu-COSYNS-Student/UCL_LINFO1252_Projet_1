@@ -47,9 +47,16 @@ void* producer(void)
   return (NULL);
 }
 
+
+
+
+
+
+
+
 void* consumer(void)
 {
-  int operation;
+ int operation;
  while(operation<ROUNDS)
  {
    sem_wait(&full); // WAITING FOR AN OCCUPIED SPOT
@@ -64,6 +71,14 @@ void* consumer(void)
  }
  return (NULL);
 }
+
+
+
+
+
+
+
+
 
 int main(int argc, char const *argv[])
 {
@@ -132,7 +147,7 @@ for (int i = 0; i < numberOfProducers; i++)
     if(err!=0){
       error(err,"pthread_create");
     }else{
-      printf("PRODUCER N° %d CREATED\n", i);
+      printf("********************PRODUCER N° %d CREATED********************\n", i);
     }
   }
 
@@ -144,7 +159,7 @@ for (int i = 0; i < numberOfConsumers; i++)
     if(err!=0){
       error(err,"pthread_create");
     }else{
-      printf("CONSUMER N° %d CREATED\n", i);
+      printf("********************CONSUMER N° %d CREATED********************\n", i);
     }
   }
 
@@ -157,7 +172,8 @@ for (int i = 0; i < numberOfConsumers; i++)
      if(err!=0){
       error(err,"pthread_join");
      }else{
-      printf("PRODUCER N° %d JOINED\n", i);
+
+      printf("********************PRODUCER N° %d JOINED********************\n", i);
     }
   }
 
@@ -167,7 +183,7 @@ for (int i = 0; i < numberOfConsumers; i++)
      if(err!=0){
       error(err,"pthread_join");
      }else{
-      printf("CONSUMER N° %d JOINED\n", i);
+      printf("********************CONSUMER N° %d JOINED********************\n", i);
     }
   }
 
