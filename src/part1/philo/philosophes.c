@@ -125,7 +125,7 @@ int main(int argc, char const * argv[]) {
   for (int i = 0; i < numberOfPhilosophers; i++) {
     err = pthread_mutex_destroy( & (forks[i]));
     if (err != 0) {
-      printf("ERROR WHILE DESTROYING THE THREAD N°%d", i);
+      printf("ERROR WHILE DESTROYING THE MUTEX (fork) N°%d", i);
       exit(-1);
     }
   }
