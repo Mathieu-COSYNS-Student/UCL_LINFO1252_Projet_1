@@ -4,7 +4,7 @@
 #include <pthread.h>
 #include <stdbool.h>
 
-#include "utils.h"
+#include "../../common/utils.h"
 
 #define MAX_READINGS 2560
 #define MAX_WRITINGS 640
