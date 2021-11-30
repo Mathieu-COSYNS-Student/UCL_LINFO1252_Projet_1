@@ -1,4 +1,4 @@
-#include "../lock.h"
+#include "lock.h"
 
 #ifndef SEMAPHORE_H
 #define SEMAPHORE_H

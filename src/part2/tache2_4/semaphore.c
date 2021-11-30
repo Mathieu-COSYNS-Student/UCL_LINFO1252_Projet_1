@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "semaphore.h"
+#include "../semaphore.h"
 
 int sem_init(sem_t *__sem, int __pshared, unsigned int __value)
 {
@@ -27,7 +27,7 @@ int sem_wait(sem_t *__sem)
   unlock(&(__sem->lock));
 
   if (!sem_ok) {
-    while(rand() > RAND_MAX/10000);
+    // while(rand() > RAND_MAX/10000);
     sem_wait(__sem);
   }
 
