@@ -9,6 +9,7 @@
 
 int numberOfThreads;
 pthread_t * threads;
+lock_t mutex;
 int err;
 
 
@@ -19,10 +20,10 @@ void * doingSomethingImportant(void * arg) {
   int * id = (int * ) arg;
   for (int i = 0; i < numberOfCriticalSections; ++i)
   {
-    lock();
+    lock(&mutex);
     printf("Thread n° %d is working really hard\n", *id);
     while (rand() > RAND_MAX / 10000);
-    unlock();
+    unlock(&mutex);
 
   }
   return (NULL);
