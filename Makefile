@@ -37,7 +37,7 @@ CC							:=	gcc
 CFLAGS						:=	-pedantic -Wvla -Wall -Werror
 LDFLAGS						:=	-pthread
 
-PHONY						:=	all clean $(BIN)
+PHONY						:=	all clean benchmark benchmark-post $(BIN)
 
 all: $(READERS_WRITERS) $(LOCK_SIMPLE_TEST) $(LOCK_2_SIMPLE_TEST) $(SEMAPHORE_SIMPLE_TEST) $(READERS_WRITERS_2)
 
@@ -62,8 +62,17 @@ $(BIN):
 %.o: %.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -c -o $@ $^
 
+benchmark: FRC
+	@./benchmark/run-all.sh
+
+benchmark-post:
+	@./benchmark/run-all_post_processor.sh
+
+FRC:
+
 clean:
 	@$(RM) -rv $(BIN)
-	@find . -type f -name '*.o' -exec rm -v {} \;
+	@find . -path ./venv -prune -o -type f -name '*.o' -exec rm -v {} \;
+	@./benchmark/clean.sh
 
 .PHONY = $(PHONY)
