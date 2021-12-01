@@ -53,7 +53,7 @@ void before_read()
 void read()
 {
   while(rand() > RAND_MAX/10000);
-  // printf("read number : %d, updated value : %d\n", readings_count, sh_var);
+  printf("read number : %d\n", readings_count);
 }
 
 void after_read()
@@ -106,7 +106,7 @@ void before_write()
 void write()
 {
   while(rand() > RAND_MAX/10000);
-  // printf("write number : %d\n", writings_count);
+  printf("write number : %d\n", writings_count);
   // sh_var++;
 }
 
