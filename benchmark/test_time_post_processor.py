@@ -12,13 +12,15 @@ VALUES_COLUMN = 'execution_time'
 
 def main(argv):
     options = read_options_from_cli(argv[1:])
-    print(f'options: {options}')
+    # print(f'options: {options}')
 
-    df = read_csv_and_agg(options['input'])
+    df = read_csv_and_agg(options['inputs'])
+
+    # print(df.head())
 
     plot(df,
          title=options['title'],
-         mean_label=options['mean_label'],
+         means_labels=options['means_labels'],
          xlabel=options['x'],
          ylabel=options['y'],
          pdf=options['output_pdf'],
@@ -26,32 +28,60 @@ def main(argv):
          graphics=options['graphics'])
 
 
-def read_csv_and_agg(filename):
-    df = pd.read_csv(filename)
+def read_csv_and_agg(files):
+    if not len(files):
+        print("No input provided", file=sys.stderr)
+        sys.exit(1)
 
-    df = df[[GROUP_BY_COLUMN, VALUES_COLUMN]]
+    main_df = None
 
-    df = df.groupby(GROUP_BY_COLUMN).agg([np.mean, np.std])
+    for i, file in enumerate(files):
+        df = pd.read_csv(file)
 
-    return df
+        df = df[[GROUP_BY_COLUMN, VALUES_COLUMN]]
+
+        df = df.groupby(GROUP_BY_COLUMN).agg([np.mean, np.std])
+
+        df.rename(columns = {VALUES_COLUMN: f"{VALUES_COLUMN}_{i}"}, inplace = True)
+
+        if main_df is None:
+            main_df = df
+        else:
+            main_df = pd.concat([main_df, df], axis=1)
 
 
-def plot(df, title=None, mean_label=None, xlabel=None, ylabel=None, pdf=None, png=None, graphics=True):
+    return main_df
 
-    main_column = df.columns.values.tolist()[0][0]
 
-    df[main_column].plot(y='mean',
-                         yerr='std',
-                         ecolor='black',
-                         capsize=5,
-                         label=mean_label)
+
+def plot(df, title=None, means_labels=None, xlabel=None, ylabel=None, pdf=None, png=None, graphics=True):
+
+    columns = []
+
+    for column in df.columns.values:
+        columns.append(column[0])
+
+    columns = list(dict.fromkeys(columns))
+
+    ax = plt.gca()
+
+    for i, column in enumerate(columns):
+        label = None
+        if len(means_labels) > i:
+            label = means_labels[i]
+        df[column].plot(y='mean',
+                            yerr='std',
+                            ecolor='black',
+                            capsize=5,
+                            ax=ax,
+                            label=label)
 
     plt.title(title)
 
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
 
-    plt.xticks(df[main_column].index.values.tolist())
+    plt.xticks(df[columns[0]].index.values.tolist())
 
     # plt.xlim(left=0)
     plt.ylim(bottom=0)
@@ -106,14 +136,14 @@ DESCRIPTION
 
 
 def read_options_from_cli(args):
-    input = None
+    inputs = []
     output_pdf = None
     output_png = None
     graphics = True
     title=None
-    mean_label=None
     x=None
     y=None
+    means_labels=[]
 
     try:
         opts, args = getopt.getopt(
@@ -128,14 +158,14 @@ def read_options_from_cli(args):
             print_usage()
             sys.exit()
         elif opt in ('-i'):
-            input = arg
+            inputs.append(arg)
         elif opt in ('-o'):
             if output_pdf == None:
                 output_pdf = f'{arg}.pdf'
             if output_png == None:
                 output_png = f'{arg}.png'
         elif opt in ('-m', '--mean-label'):
-            mean_label = arg
+            means_labels.append(arg)
         elif opt in ('--no-graphics'):
             graphics = False
         elif opt in ('--out-pdf'):
@@ -154,12 +184,12 @@ def read_options_from_cli(args):
         sys.exit(1)
 
     return {
-        'input': input,
+        'inputs': inputs,
         'output_pdf': output_pdf,
         'output_png': output_png,
         'graphics': graphics,
         'title': title,
-        'mean_label': mean_label,
+        'means_labels': means_labels,
         'x': x,
         'y': y
     }
