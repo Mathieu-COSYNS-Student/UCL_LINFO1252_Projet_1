@@ -19,16 +19,13 @@ int sem_destroy(sem_t *__sem)
 int sem_wait(sem_t *__sem)
 {
   int sem_ok = 0;
-  lock(&(__sem->lock));
-  if (__sem->size) {
-    __sem->size--;
-    sem_ok = 1;
-  }
-  unlock(&(__sem->lock));
-
-  if (!sem_ok) {
-    // while(rand() > RAND_MAX/10000);
-    sem_wait(__sem);
+  while (!sem_ok) {
+    lock(&(__sem->lock));
+    if (__sem->size) {
+      __sem->size--;
+      sem_ok = 1;
+    }
+    unlock(&(__sem->lock));
   }
 
   return 0;
