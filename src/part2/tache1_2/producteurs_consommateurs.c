@@ -96,7 +96,7 @@ int main(int argc, char
   const * argv[]) {
   // HANDLING THE INPUT ARGUMENTS
   if (argc != 3) {
-    printf("This program uses 2 argument.\n");
+    printf("This program uses 2 arguments. Params : NUMBER_OF_PRODUCERS NUMBER_OF_CONSUMERS\n");
     exit(-1);
   }
   numberOfProducers = atoi(argv[1]);

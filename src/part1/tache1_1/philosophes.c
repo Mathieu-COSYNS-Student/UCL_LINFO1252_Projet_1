@@ -56,7 +56,7 @@ void * philosopher(void * arg) {
 int main(int argc, char const * argv[]) {
   // HANDLING THE INPUT ARGUMENTS
   if (argc != 2) {
-    printf("This program uses 1 argument.\n");
+    printf("This program uses 1 argument. Param : NUMBER OF PHILOSOPHERS(Threads)\n");
     exit(-1);
   }
 
