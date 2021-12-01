@@ -22,12 +22,12 @@ READERS_WRITERS				:=	$(BIN)/readers_writers_1
 READERS_WRITERS_MAIN		:=	$(SRC)/part1/tache1_3/readers_writers.c
 
 # Tache 2.1 + 2.2
-LOCK_SIMPLE_TEST			:=	$(BIN)/lock_simple_test
+LOCK_SIMPLE_TEST			:=	$(BIN)/lock_simple_test_1
 LOCK_SIMPLE_TEST_MAIN		:=	$(SRC)/part2/tache2_2/lock_simple_test.c
 LOCK_OBJ					:=	$(patsubst %.c,%.o,$(wildcard $(SRC)/part2/tache2_1/*.c))
 
 # Tache 2.3 + 2.2
-LOCK_2_SIMPLE_TEST			:=	$(BIN)/lock_2_simple_test
+LOCK_2_SIMPLE_TEST			:=	$(BIN)/lock_simple_test_2
 LOCK_2_SIMPLE_TEST_MAIN		:=	$(SRC)/part2/tache2_2/lock_simple_test.c
 LOCK_2_OBJ					:=	$(patsubst %.c,%.o,$(wildcard $(SRC)/part2/tache2_3/*.c))
 
@@ -41,7 +41,7 @@ SEMAPHORE_2_OBJ				:=	$(patsubst %.c,%.o,$(call not-containing,test,$(wildcard $
 #	- Adaptation de la tache 1.1
 PHILOSOPHES_2				:= $(BIN)/philosophes_2
 PHILOSOPHES_3				:= $(BIN)/philosophes_3
-PHILOSOPHES_UPDATED_MAIN			:= $(SRC)/part2/tache1_1/philosophes.c
+PHILOSOPHES_UPDATED_MAIN	:= $(SRC)/part2/tache1_1/philosophes.c
 
 #	- Adaptation de la tache 1.2
 PRODUCTEURS_CONSOMMATEURS_2	:= $(BIN)/producteurs_consommateurs_2
@@ -51,7 +51,7 @@ PRODUCTEURS_CONSOMMATEURS_UPDATED_MAIN	:= $(SRC)/part2/tache1_2/producteurs_cons
 #	- Adaptation de la tache 1.3
 READERS_WRITERS_2			:=	$(BIN)/readers_writers_2
 READERS_WRITERS_3			:=	$(BIN)/readers_writers_3
-READERS_WRITERS_UPDATED_MAIN		:=	$(SRC)/part2/tache1_3/readers_writers.c
+READERS_WRITERS_UPDATED_MAIN:=	$(SRC)/part2/tache1_3/readers_writers.c
 
 CC							:=	gcc
 CFLAGS						:=	-pedantic -Wvla -Wall -Werror
