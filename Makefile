@@ -9,6 +9,14 @@ SRC							:=	src
 COMMON_SRC					:=	$(wildcard $(SRC)/common/*.c)
 COMMON_OBJ					:=	$(COMMON_SRC:.c=.o)
 
+# Tache 1.1
+PHILOSOPHES					:= $(BIN)/philosophes
+PHILOSOPHES_MAIN			:= $(SRC)/part1/tache1_1/philosophes.c
+
+# Tache 1.2
+PRODUCTEURS_CONSOMMATEURS	:= $(BIN)/producteurs_consommateurs
+PRODUCTEURS_CONSOMMATEURS_MAIN	:= $(SRC)/part1/tache1_2/producteurs_consommateurs.c
+
 # Tache 1.3
 READERS_WRITERS				:=	$(BIN)/readers_writers
 READERS_WRITERS_MAIN		:=	$(SRC)/part1/tache1_3/readers_writers.c
@@ -29,6 +37,14 @@ SEMAPHORE_SIMPLE_TEST_MAIN	:=	$(SRC)/part2/tache2_4/semaphore_simple_test.c
 SEMAPHORE_OBJ				:=	$(patsubst %.c,%.o,$(call not-containing,test,$(wildcard $(SRC)/part2/tache2_4/*.c))) $(LOCK_2_OBJ)
 
 # Tache 2.5
+#	- Adaptation de la tache 1.1
+PHILOSOPHES_2				:= $(BIN)/philosophes_2
+PHILOSOPHES_2_MAIN			:= $(SRC)/part2/tache1_1/philosophes.c
+
+#	- Adaptation de la tache 1.2
+PRODUCTEURS_CONSOMMATEURS_2	:= $(BIN)/producteurs_consommateurs_2
+PRODUCTEURS_CONSOMMATEURS_2_MAIN	:= $(SRC)/part2/tache1_2/producteurs_consommateurs.c
+
 #	- Adaptation de la tache 1.3
 READERS_WRITERS_2			:=	$(BIN)/readers_writers_2
 READERS_WRITERS_2_MAIN		:=	$(SRC)/part2/tache1_3/readers_writers.c
@@ -39,7 +55,13 @@ LDFLAGS						:=	-pthread
 
 PHONY						:=	all clean $(BIN)
 
-all: $(READERS_WRITERS) $(LOCK_SIMPLE_TEST) $(LOCK_2_SIMPLE_TEST) $(SEMAPHORE_SIMPLE_TEST) $(READERS_WRITERS_2)
+all: $(PHILOSOPHES) $(PRODUCTEURS_CONSOMMATEURS) $(READERS_WRITERS) $(LOCK_SIMPLE_TEST) $(LOCK_2_SIMPLE_TEST) $(SEMAPHORE_SIMPLE_TEST) $(PHILOSOPHES_2) $(PRODUCTEURS_CONSOMMATEURS_2) $(READERS_WRITERS_2)
+
+$(PHILOSOPHES): $(PHILOSOPHES_MAIN) $(COMMON_OBJ) | $(BIN)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(PHILOSOPHES_MAIN) $(COMMON_OBJ)
+
+$(PRODUCTEURS_CONSOMMATEURS): $(PRODUCTEURS_CONSOMMATEURS_MAIN) $(COMMON_OBJ) | $(BIN)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(PRODUCTEURS_CONSOMMATEURS_MAIN) $(COMMON_OBJ)
 
 $(READERS_WRITERS): $(READERS_WRITERS_MAIN) $(COMMON_OBJ) | $(BIN)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(READERS_WRITERS_MAIN) $(COMMON_OBJ)
@@ -52,6 +74,12 @@ $(LOCK_2_SIMPLE_TEST): $(LOCK_2_SIMPLE_TEST_MAIN) $(LOCK_2_OBJ) $(COMMON_OBJ) | 
 
 $(SEMAPHORE_SIMPLE_TEST): $(SEMAPHORE_SIMPLE_TEST_MAIN) $(SEMAPHORE_OBJ) $(COMMON_OBJ) | $(BIN)
 	$(CC) $(CFLAGS) -o $@ $(SEMAPHORE_SIMPLE_TEST_MAIN) $(SEMAPHORE_OBJ) $(COMMON_OBJ)
+
+$(PHILOSOPHES_2): $(PHILOSOPHES_2_MAIN) $(LOCK_2_OBJ) $(COMMON_OBJ) | $(BIN)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(PHILOSOPHES_2_MAIN) $(COMMON_OBJ) $(LOCK_2_OBJ)
+
+$(PRODUCTEURS_CONSOMMATEURS_2): $(PRODUCTEURS_CONSOMMATEURS_2_MAIN) $(SEMAPHORE_OBJ) $(COMMON_OBJ) | $(BIN)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(PRODUCTEURS_CONSOMMATEURS_2_MAIN) $(COMMON_OBJ) $(SEMAPHORE_OBJ)
 
 $(READERS_WRITERS_2): $(READERS_WRITERS_2_MAIN) $(SEMAPHORE_OBJ) $(COMMON_OBJ) | $(BIN)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(READERS_WRITERS_2_MAIN) $(SEMAPHORE_OBJ) $(COMMON_OBJ)
