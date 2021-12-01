@@ -13,15 +13,20 @@ COMMON_OBJ					:=	$(COMMON_SRC:.c=.o)
 READERS_WRITERS				:=	$(BIN)/readers_writers
 READERS_WRITERS_MAIN		:=	$(SRC)/part1/tache1_3/readers_writers.c
 
-# Tache 2.1
+# Tache 2.1 + 2.2
 LOCK_SIMPLE_TEST			:=	$(BIN)/lock_simple_test
-LOCK_SIMPLE_TEST_MAIN		:=	$(SRC)/part2/lock_simple_test.c
-LOCK_OBJ					:=	$(patsubst %.c,%.o,$(wildcard $(SRC)/part2/tache2_3/*.c))
+LOCK_SIMPLE_TEST_MAIN		:=	$(SRC)/part2/tache2_2/lock_simple_test.c
+LOCK_OBJ					:=	$(patsubst %.c,%.o,$(wildcard $(SRC)/part2/tache2_1/*.c))
+
+# Tache 2.3 + 2.2
+LOCK_2_SIMPLE_TEST			:=	$(BIN)/lock_2_simple_test
+LOCK_2_SIMPLE_TEST_MAIN		:=	$(SRC)/part2/tache2_2/lock_simple_test.c
+LOCK_2_OBJ					:=	$(patsubst %.c,%.o,$(wildcard $(SRC)/part2/tache2_3/*.c))
 
 # Tache 2.4
 SEMAPHORE_SIMPLE_TEST		:=	$(BIN)/semaphore_simple_test
 SEMAPHORE_SIMPLE_TEST_MAIN	:=	$(SRC)/part2/tache2_4/semaphore_simple_test.c
-SEMAPHORE_OBJ				:=	$(patsubst %.c,%.o,$(call not-containing,test,$(wildcard $(SRC)/part2/tache2_4/*.c)))
+SEMAPHORE_OBJ				:=	$(patsubst %.c,%.o,$(call not-containing,test,$(wildcard $(SRC)/part2/tache2_4/*.c))) $(LOCK_2_OBJ)
 
 # Tache 2.5
 #	- Adaptation de la tache 1.3
@@ -32,21 +37,24 @@ CC							:=	gcc
 CFLAGS						:=	-pedantic -Wvla -Wall -Werror
 LDFLAGS						:=	-pthread
 
-PHONY						:=	all clean $(BIN) $(LOCK)
+PHONY						:=	all clean $(BIN)
 
-all: $(READERS_WRITERS) $(LOCK_SIMPLE_TEST) $(SEMAPHORE_SIMPLE_TEST) $(READERS_WRITERS_2)
+all: $(READERS_WRITERS) $(LOCK_SIMPLE_TEST) $(LOCK_2_SIMPLE_TEST) $(SEMAPHORE_SIMPLE_TEST) $(READERS_WRITERS_2)
 
 $(READERS_WRITERS): $(READERS_WRITERS_MAIN) $(COMMON_OBJ) | $(BIN)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(READERS_WRITERS_MAIN) $(COMMON_OBJ)
 
 $(LOCK_SIMPLE_TEST): $(LOCK_SIMPLE_TEST_MAIN) $(LOCK_OBJ) $(COMMON_OBJ) | $(BIN)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(LOCK_SIMPLE_TEST_MAIN) $(LOCK_OBJ) $(COMMON_OBJ)
+	
+$(LOCK_2_SIMPLE_TEST): $(LOCK_2_SIMPLE_TEST_MAIN) $(LOCK_2_OBJ) $(COMMON_OBJ) | $(BIN)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(LOCK_SIMPLE_TEST_MAIN) $(LOCK_2_OBJ) $(COMMON_OBJ)
 
-$(SEMAPHORE_SIMPLE_TEST): $(SEMAPHORE_SIMPLE_TEST_MAIN) $(SEMAPHORE_OBJ) $(LOCK_OBJ) $(COMMON_OBJ) | $(BIN)
-	$(CC) $(CFLAGS) -o $@ $(SEMAPHORE_SIMPLE_TEST_MAIN) $(SEMAPHORE_OBJ) $(LOCK_OBJ) $(COMMON_OBJ)
+$(SEMAPHORE_SIMPLE_TEST): $(SEMAPHORE_SIMPLE_TEST_MAIN) $(SEMAPHORE_OBJ) $(COMMON_OBJ) | $(BIN)
+	$(CC) $(CFLAGS) -o $@ $(SEMAPHORE_SIMPLE_TEST_MAIN) $(SEMAPHORE_OBJ) $(COMMON_OBJ)
 
-$(READERS_WRITERS_2): $(READERS_WRITERS_2_MAIN) $(SEMAPHORE_OBJ) $(LOCK_OBJ) $(COMMON_OBJ) | $(BIN)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(READERS_WRITERS_2_MAIN) $(SEMAPHORE_OBJ) $(LOCK_OBJ) $(COMMON_OBJ)
+$(READERS_WRITERS_2): $(READERS_WRITERS_2_MAIN) $(SEMAPHORE_OBJ) $(COMMON_OBJ) | $(BIN)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(READERS_WRITERS_2_MAIN) $(SEMAPHORE_OBJ) $(COMMON_OBJ)
 
 $(BIN):
 	mkdir $@

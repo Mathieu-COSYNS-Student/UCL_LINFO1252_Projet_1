@@ -3,7 +3,7 @@
 #include <pthread.h>
 
 
-#include "lock.h"
+#include "../lock.h"
 
 #define NB_CRITICAL_SECTION_MAX 6400
 
@@ -17,11 +17,11 @@ int err;
 
 void * doingSomethingImportant(void * arg) {
   int numberOfCriticalSections = NB_CRITICAL_SECTION_MAX/numberOfThreads;
-  int * id = (int * ) arg;
+  // int * id = (int * ) arg;
   for (int i = 0; i < numberOfCriticalSections; ++i)
   {
     lock(&mutex);
-    printf("Thread n° %d is working really hard\n", *id);
+    // printf("Thread n° %d is working really hard\n", *id);
     while (rand() > RAND_MAX / 10000);
     unlock(&mutex);
 
@@ -53,7 +53,7 @@ int main(int argc, char const *argv[])
         printf("ERROR WHILE CREATING THREAD N°%d", i);
         exit(-1);
       } else {
-        printf("********************THREAD N° %d CREATED********************\n", i);
+        // printf("********************THREAD N° %d CREATED********************\n", i);
       }
     }
 
@@ -63,7 +63,7 @@ int main(int argc, char const *argv[])
         printf("ERROR WHILE JOINING THREAD N°%d", i);
         exit(-1);
       } else {
-        printf("********************THREAD N° %d JOINED********************\n", i);
+        // printf("********************THREAD N° %d JOINED********************\n", i);
       }
     }
 
