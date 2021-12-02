@@ -1,15 +1,9 @@
-#include <pthread.h>
-
-#include <stdio.h>
-
 #include <stdlib.h>
-
+#include <stdio.h>
+#include <pthread.h>
 #include <stdbool.h>
 
-#include <unistd.h>
-
 #include <semaphore.h>
-
 
 #define BUFFER_SIZE 8
 #define ROUNDS 1024
@@ -72,9 +66,9 @@ void * producer(void * arg) {
     printf("Producer %d: Producing in slot n° %d\n", * num, in );
     buffer[ in ] = 1;
     in = ( in +1) % BUFFER_SIZE;
-    while (rand() > RAND_MAX / 10000); 
     pthread_mutex_unlock( & mutex);
     sem_post( & full); // INDICATING THAT A SPOT HAS BEEN FILLED
+    while (rand() > RAND_MAX / 10000); 
   }
   return (NULL);
 }
@@ -89,10 +83,9 @@ void * consumer(void * arg) {
     printf("Consumer %d: Consuming from slot n° %d\n", * num, out);
     buffer[out] = 0;
     out = (out + 1) % BUFFER_SIZE;
-    while (rand() > RAND_MAX / 10000);
     pthread_mutex_unlock( & mutex);
     sem_post( & empty); // INDICATING THAT A SPOT HAS BEEN EMPTIED
-    
+    while (rand() > RAND_MAX / 10000);
   }
 
   return (NULL);

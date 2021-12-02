@@ -69,8 +69,8 @@ void * producer(void * arg) {
     in = ( in +1) % BUFFER_SIZE;
     unlock( & mutex);
     sem_post( & full); // INDICATING THAT A SPOT HAS BEEN FILLED
+    while (rand() > RAND_MAX / 10000);
   }
-  while (rand() > RAND_MAX / 10000);
   return (NULL);
 }
 
@@ -86,8 +86,8 @@ void * consumer(void * arg) {
     out = (out + 1) % BUFFER_SIZE;
     unlock( & mutex);
     sem_post( & empty); // INDICATING THAT A SPOT HAS BEEN EMPTIED
+    while (rand() > RAND_MAX / 10000);
   }
-  while (rand() > RAND_MAX / 10000);
 
   return (NULL);
 }
