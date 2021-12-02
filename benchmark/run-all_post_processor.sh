@@ -37,7 +37,7 @@ OUTDIR="$BASEDIR/out"
   
 # Tache 2.2
 "$BASEDIR/test_time_post_processor.py" \
-  -t "Attante active" \
+  -t "Attente active" \
   -x "Nombre de threads totaux" \
   -y "Nombre de secondes" \
   -i "$OUTDIR/lock_simple_test_1.csv" -m "test-and-set" \
