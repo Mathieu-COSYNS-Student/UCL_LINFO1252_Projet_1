@@ -19,9 +19,11 @@ int sem_destroy(sem_t *__sem)
 int sem_wait(sem_t *__sem)
 {
   int sem_ok = 0;
-  while (!sem_ok) {
+  while (!sem_ok)
+  {
     lock(&(__sem->lock));
-    if (__sem->size) {
+    if (__sem->size)
+    {
       __sem->size--;
       sem_ok = 1;
     }

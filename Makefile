@@ -1,5 +1,5 @@
 # LINFO1252 - Projet 1
-#	
+#
 # Authors :
 #		Groupe 15 (Mercredi)
 #		- Mathieu Cosyns - 86032100
@@ -23,103 +23,109 @@ not-containing = $(foreach v,$2,$(if $(findstring $1,$v),,$v))
 BIN							:=	bin
 SRC							:=	src
 
-# Common
-COMMON_SRC					:=	$(wildcard $(SRC)/common/*.c)
-COMMON_OBJ					:=	$(COMMON_SRC:.c=.o)
+# Utils
+UTILS_POSIX					:=	$(SRC)/part1/utils.c
+UTILS_TEST_AND_SET			:=	$(SRC)/part2/utils.c $(patsubst %.c,%.o,$(call not-containing,test,$(wildcard $(SRC)/part2/tache2_4/*.c))) $(patsubst %.c,%.o,$(wildcard $(SRC)/part2/tache2_1/*.c))
+UTILS_TEST_AND_TEST_AND_SET	:=	$(SRC)/part2/utils.c $(patsubst %.c,%.o,$(call not-containing,test,$(wildcard $(SRC)/part2/tache2_4/*.c))) $(patsubst %.c,%.o,$(wildcard $(SRC)/part2/tache2_3/*.c))
 
 # Tache 1.1
-PHILOSOPHES					:= $(BIN)/philosophes_1
-PHILOSOPHES_MAIN			:= $(SRC)/part1/tache1_1/philosophes.c
+PHILOSOPHES_1				:=	$(BIN)/philosophes_1
+PHILOSOPHES_MAIN			:=	$(SRC)/part1/tache1_1/philosophes.c
 
 # Tache 1.2
-PRODUCTEURS_CONSOMMATEURS	:= $(BIN)/producteurs_consommateurs_1
-PRODUCTEURS_CONSOMMATEURS_MAIN	:= $(SRC)/part1/tache1_2/producteurs_consommateurs.c
+PRODUCTEURS_CONSOMMATEURS_1	:=	$(BIN)/producteurs_consommateurs_1
+PRODUCTEURS_CONSOMMATEURS_MAIN	:=	$(SRC)/part1/tache1_2/producteurs_consommateurs.c
 
 # Tache 1.3
-READERS_WRITERS				:=	$(BIN)/readers_writers_1
+READERS_WRITERS_1			:=	$(BIN)/readers_writers_1
 READERS_WRITERS_MAIN		:=	$(SRC)/part1/tache1_3/readers_writers.c
 
 # Tache 2.1 + 2.2
-LOCK_SIMPLE_TEST			:=	$(BIN)/lock_simple_test_1
-LOCK_SIMPLE_TEST_MAIN		:=	$(SRC)/part2/tache2_2/lock_simple_test.c
-LOCK_OBJ					:=	$(patsubst %.c,%.o,$(wildcard $(SRC)/part2/tache2_1/*.c))
+LOCK_TEST_1					:=	$(BIN)/lock_test_1
+LOCK_TEST_MAIN				:=	$(SRC)/part2/tache2_2/lock_test.c
 
 # Tache 2.3 + 2.2
-LOCK_2_SIMPLE_TEST			:=	$(BIN)/lock_simple_test_2
-LOCK_2_SIMPLE_TEST_MAIN		:=	$(SRC)/part2/tache2_2/lock_simple_test.c
-LOCK_2_OBJ					:=	$(patsubst %.c,%.o,$(wildcard $(SRC)/part2/tache2_3/*.c))
+LOCK_TEST_2					:=	$(BIN)/lock_test_2
 
 # Tache 2.4
-SEMAPHORE_SIMPLE_TEST		:=	$(BIN)/semaphore_simple_test
-SEMAPHORE_SIMPLE_TEST_MAIN	:=	$(SRC)/part2/tache2_4/semaphore_simple_test.c
-SEMAPHORE_OBJ				:=	$(patsubst %.c,%.o,$(call not-containing,test,$(wildcard $(SRC)/part2/tache2_4/*.c))) $(LOCK_OBJ)
-SEMAPHORE_2_OBJ				:=	$(patsubst %.c,%.o,$(call not-containing,test,$(wildcard $(SRC)/part2/tache2_4/*.c))) $(LOCK_2_OBJ)
+SEMAPHORE_TEST				:=	$(BIN)/semaphore_test
+SEMAPHORE_TEST_MAIN			:=	$(SRC)/part2/tache2_4/semaphore_test.c
 
 # Tache 2.5
 #	- Adaptation de la tache 1.1
-PHILOSOPHES_2				:= $(BIN)/philosophes_2
-PHILOSOPHES_3				:= $(BIN)/philosophes_3
-PHILOSOPHES_UPDATED_MAIN	:= $(SRC)/part2/tache1_1/philosophes.c
+PHILOSOPHES_2				:=	$(BIN)/philosophes_2
+PHILOSOPHES_3				:=	$(BIN)/philosophes_3
 
 #	- Adaptation de la tache 1.2
-PRODUCTEURS_CONSOMMATEURS_2	:= $(BIN)/producteurs_consommateurs_2
-PRODUCTEURS_CONSOMMATEURS_3	:= $(BIN)/producteurs_consommateurs_3
-PRODUCTEURS_CONSOMMATEURS_UPDATED_MAIN	:= $(SRC)/part2/tache1_2/producteurs_consommateurs.c
+PRODUCTEURS_CONSOMMATEURS_2	:=	$(BIN)/producteurs_consommateurs_2
+PRODUCTEURS_CONSOMMATEURS_3	:=	$(BIN)/producteurs_consommateurs_3
 
 #	- Adaptation de la tache 1.3
 READERS_WRITERS_2			:=	$(BIN)/readers_writers_2
 READERS_WRITERS_3			:=	$(BIN)/readers_writers_3
-READERS_WRITERS_UPDATED_MAIN:=	$(SRC)/part2/tache1_3/readers_writers.c
 
 CC							:=	gcc
 CFLAGS						:=	-pedantic -Wvla -Wall -Werror
 LDFLAGS						:=	-pthread
 
+FLAGS						:=	$(CFLAGS) $(LDFLAGS)
+
 PHONY						:=	all clean benchmark benchmark-post $(BIN)
 
-all: $(PHILOSOPHES) $(PRODUCTEURS_CONSOMMATEURS) $(READERS_WRITERS) $(LOCK_SIMPLE_TEST) $(LOCK_2_SIMPLE_TEST) $(SEMAPHORE_SIMPLE_TEST) $(PHILOSOPHES_2) $(PRODUCTEURS_CONSOMMATEURS_2) $(READERS_WRITERS_2) $(PHILOSOPHES_3) $(PRODUCTEURS_CONSOMMATEURS_3) $(READERS_WRITERS_3)
+all: $(PHILOSOPHES_1) \
+	$(PHILOSOPHES_2) \
+	$(PHILOSOPHES_3) \
+	$(PRODUCTEURS_CONSOMMATEURS_1) \
+	$(PRODUCTEURS_CONSOMMATEURS_2) \
+	$(PRODUCTEURS_CONSOMMATEURS_3) \
+	$(READERS_WRITERS_1) \
+	$(READERS_WRITERS_2) \
+	$(READERS_WRITERS_3) \
+	$(LOCK_TEST_1) \
+	$(LOCK_TEST_2) \
+	$(SEMAPHORE_TEST)
 
-$(PHILOSOPHES): $(PHILOSOPHES_MAIN) $(COMMON_OBJ) | $(BIN)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(PHILOSOPHES_MAIN) $(COMMON_OBJ)
+$(PHILOSOPHES_1): $(PHILOSOPHES_MAIN) $(UTILS_POSIX) | $(BIN)
+	$(CC) $(FLAGS) -o $@ $(PHILOSOPHES_MAIN) $(UTILS_POSIX)
 
-$(PRODUCTEURS_CONSOMMATEURS): $(PRODUCTEURS_CONSOMMATEURS_MAIN) $(COMMON_OBJ) | $(BIN)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(PRODUCTEURS_CONSOMMATEURS_MAIN) $(COMMON_OBJ)
+$(PHILOSOPHES_2): $(PHILOSOPHES_MAIN) $(UTILS_TEST_AND_SET) | $(BIN)
+	$(CC) $(FLAGS) -o $@ $(PHILOSOPHES_MAIN) $(LOCK_OBJ_1) $(UTILS_TEST_AND_SET)
 
-$(READERS_WRITERS): $(READERS_WRITERS_MAIN) $(COMMON_OBJ) | $(BIN)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(READERS_WRITERS_MAIN) $(COMMON_OBJ)
+$(PHILOSOPHES_3): $(PHILOSOPHES_MAIN) $(UTILS_TEST_AND_TEST_AND_SET) | $(BIN)
+	$(CC) $(FLAGS) -o $@ $(PHILOSOPHES_MAIN) $(UTILS_TEST_AND_TEST_AND_SET)
 
-$(LOCK_SIMPLE_TEST): $(LOCK_SIMPLE_TEST_MAIN) $(LOCK_OBJ) $(COMMON_OBJ) | $(BIN)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(LOCK_SIMPLE_TEST_MAIN) $(LOCK_OBJ) $(COMMON_OBJ)
-	
-$(LOCK_2_SIMPLE_TEST): $(LOCK_2_SIMPLE_TEST_MAIN) $(LOCK_2_OBJ) $(COMMON_OBJ) | $(BIN)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(LOCK_SIMPLE_TEST_MAIN) $(LOCK_2_OBJ) $(COMMON_OBJ)
+$(PRODUCTEURS_CONSOMMATEURS_1): $(PRODUCTEURS_CONSOMMATEURS_MAIN) $(UTILS_POSIX) | $(BIN)
+	$(CC) $(FLAGS) -o $@ $(PRODUCTEURS_CONSOMMATEURS_MAIN) $(UTILS_POSIX)
 
-$(SEMAPHORE_SIMPLE_TEST): $(SEMAPHORE_SIMPLE_TEST_MAIN) $(SEMAPHORE_OBJ) $(COMMON_OBJ) | $(BIN)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(SEMAPHORE_SIMPLE_TEST_MAIN) $(SEMAPHORE_OBJ) $(COMMON_OBJ)
+$(PRODUCTEURS_CONSOMMATEURS_2): $(PRODUCTEURS_CONSOMMATEURS_MAIN) $(UTILS_TEST_AND_SET) | $(BIN)
+	$(CC) $(FLAGS) -o $@ $(PRODUCTEURS_CONSOMMATEURS_MAIN) $(UTILS_TEST_AND_SET)
 
-$(PHILOSOPHES_2): $(PHILOSOPHES_UPDATED_MAIN) $(LOCK_OBJ) $(COMMON_OBJ) | $(BIN)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(PHILOSOPHES_UPDATED_MAIN) $(COMMON_OBJ) $(LOCK_OBJ)
+$(PRODUCTEURS_CONSOMMATEURS_3): $(PRODUCTEURS_CONSOMMATEURS_MAIN) $(UTILS_TEST_AND_TEST_AND_SET) | $(BIN)
+	$(CC) $(FLAGS) -o $@ $(PRODUCTEURS_CONSOMMATEURS_MAIN) $(UTILS_TEST_AND_TEST_AND_SET)
 
-$(PRODUCTEURS_CONSOMMATEURS_2): $(PRODUCTEURS_CONSOMMATEURS_UPDATED_MAIN) $(SEMAPHORE_OBJ) $(COMMON_OBJ) | $(BIN)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(PRODUCTEURS_CONSOMMATEURS_UPDATED_MAIN) $(COMMON_OBJ) $(SEMAPHORE_OBJ)
+$(READERS_WRITERS_1): $(READERS_WRITERS_MAIN) $(UTILS_POSIX) | $(BIN)
+	$(CC) $(FLAGS) -o $@ $(READERS_WRITERS_MAIN) $(UTILS_POSIX)
 
-$(READERS_WRITERS_2): $(READERS_WRITERS_UPDATED_MAIN) $(SEMAPHORE_OBJ) $(COMMON_OBJ) | $(BIN)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(READERS_WRITERS_UPDATED_MAIN) $(SEMAPHORE_OBJ) $(COMMON_OBJ)
+$(READERS_WRITERS_2): $(READERS_WRITERS_MAIN) $(UTILS_TEST_AND_SET) | $(BIN)
+	$(CC) $(FLAGS) -o $@ $(READERS_WRITERS_MAIN) $(UTILS_TEST_AND_SET)
 
-$(PHILOSOPHES_3): $(PHILOSOPHES_UPDATED_MAIN) $(LOCK_2_OBJ) $(COMMON_OBJ) | $(BIN)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(PHILOSOPHES_UPDATED_MAIN) $(COMMON_OBJ) $(LOCK_2_OBJ)
+$(READERS_WRITERS_3): $(READERS_WRITERS_MAIN) $(UTILS_TEST_AND_TEST_AND_SET) | $(BIN)
+	$(CC) $(FLAGS) -o $@ $(READERS_WRITERS_MAIN) $(UTILS_TEST_AND_TEST_AND_SET)
 
-$(PRODUCTEURS_CONSOMMATEURS_3): $(PRODUCTEURS_CONSOMMATEURS_UPDATED_MAIN) $(SEMAPHORE_2_OBJ) $(COMMON_OBJ) | $(BIN)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(PRODUCTEURS_CONSOMMATEURS_UPDATED_MAIN) $(COMMON_OBJ) $(SEMAPHORE_2_OBJ)
+$(LOCK_TEST_1): $(LOCK_TEST_MAIN) $(UTILS_TEST_AND_SET)| $(BIN)
+	$(CC) $(FLAGS) -o $@ $(LOCK_TEST_MAIN) $(UTILS_TEST_AND_SET)
 
-$(READERS_WRITERS_3): $(READERS_WRITERS_UPDATED_MAIN) $(SEMAPHORE_2_OBJ) $(COMMON_OBJ) | $(BIN)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(READERS_WRITERS_UPDATED_MAIN) $(SEMAPHORE_2_OBJ) $(COMMON_OBJ)
+$(LOCK_TEST_2): $(LOCK_TEST_MAIN) $(UTILS_TEST_AND_TEST_AND_SET) | $(BIN)
+	$(CC) $(FLAGS) -o $@ $(LOCK_TEST_MAIN) $(UTILS_TEST_AND_TEST_AND_SET)
+
+$(SEMAPHORE_TEST): $(SEMAPHORE_TEST_MAIN) $(UTILS_TEST_AND_TEST_AND_SET) | $(BIN)
+	$(CC) $(FLAGS) -o $@ $(SEMAPHORE_TEST_MAIN) $(UTILS_TEST_AND_TEST_AND_SET)
 
 $(BIN):
 	mkdir $@
 
 %.o: %.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -c -o $@ $^
+	$(CC) $(FLAGS) -c -o $@ $^
 
 benchmark: FRC
 	@./benchmark/run-all.sh

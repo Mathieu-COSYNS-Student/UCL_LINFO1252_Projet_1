@@ -45,8 +45,8 @@ fi
   -t "Attente active" \
   -x "Nombre de threads totaux" \
   -y "Nombre de secondes" \
-  -i "$OUTDIR/lock_simple_test_1.csv" -m "test-and-set" \
-  -i "$OUTDIR/lock_simple_test_2.csv" -m "test-and-test-and-set" \
-  -o "$OUTDIR/lock_simple_test" "$GRAPHICS" &
+  -i "$OUTDIR/lock_test_1.csv" -m "test-and-set" \
+  -i "$OUTDIR/lock_test_2.csv" -m "test-and-test-and-set" \
+  -o "$OUTDIR/lock_test" "$GRAPHICS" &
 
 wait $(jobs -p)

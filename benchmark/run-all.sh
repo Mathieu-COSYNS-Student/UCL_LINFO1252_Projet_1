@@ -34,5 +34,5 @@ DOUBLE_THREADS=$(expr "$(nproc) * 2" | bc)
 for i in $(seq 1 2)
 do
   "$BASEDIR/test_time.sh" --max-threads $DOUBLE_THREADS \
-  "$BASEDIR/../bin/lock_simple_test_$i" > "$OUTDIR/lock_simple_test_$i.csv"
+  "$BASEDIR/../bin/lock_test_$i" > "$OUTDIR/lock_test_$i.csv"
 done
